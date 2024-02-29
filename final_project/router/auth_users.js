@@ -61,15 +61,41 @@ regd_users.post("/login", (req,res) => {
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-  //Write your code here
-  const isbn = req.params.isbn;
-  const review = req.body.review;
-  const username = req.session.authorization.username;
-  if(books[isbn]){
-    let book = books[isbn]
-  }
-  return res.status(300).json({message: "Yet to be implemented"});
-});
+    //Write your code here
+    //1) We fetch the ISBN given in the HTTP request parameters and filter the details (author, title, review) for that ISBN.
+    //2)If the book with that ISBN exists, then the review added in the HTTP request query is fetched. Else, the message  "Unable to find this ISBN!" is rendered.
+    //3)Session authorization is checked based on the username.
+    //4)If a review has been provided in the HTTP request query, it is assigned to the given username,
+    //and further to the reviews of the book with the above ISBN. This way multiple users can post and update their respective book reviews.
+    const isbn = req.params.isbn;
+    let filtered_book = books[isbn]
+    if (filtered_book) {
+        let review = req.query.review;
+        let reviewer = req.session.authorization['username'];
+        if(review) {
+            filtered_book['reviews'][reviewer] = review;
+            books[isbn] = filtered_book;
+        }
+        res.send(`The review for the book with ISBN  ${isbn} has been added/updated.`);
+    }
+    else{
+        res.send("Unable to find this ISBN!");
+    }
+  });
+  
+  // Delete a book review
+  regd_users.delete("/auth/review/:isbn", (req, res) =>{
+      const isbn = req.params.isbn;
+      let reviewer = req.session.authorization['username'];
+      let(filtered_review) = books[isbn]["username"];
+      if(filtered_review[reviewer]){
+          delete filtered_review[reviewer];
+          res.send('Reviews for the ISBN ${isbn} posted by the user ${reviewer} has been successfully deleted.');
+      }
+      else{
+          res.send("Can't delete review posted by another user" );
+      }
+  });
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
