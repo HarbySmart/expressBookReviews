@@ -84,7 +84,7 @@ public_users.get('/review/:isbn',function (req, res) {
   return res.send(books[isbn].reviews)
 });
 
-//Get books list available using promise
+//Get books list available with Promise Callbacks
 
 public_users.get('/books',function (req, res) {
 
@@ -96,7 +96,7 @@ public_users.get('/books',function (req, res) {
 
 });
 
-//Get book details based on ISBN
+//Get book details based on ISBN with Promise Callbacks
 public_users.get('/isbn/:isbn', function(req, res) {
 
     const get_books_isbn = new Promise((resolve,reject) => {
@@ -107,7 +107,7 @@ public_users.get('/isbn/:isbn', function(req, res) {
 });
 
 
-//Get book details based on Author
+//Get book details based on Author with Promise Callbacks
 public_users.get('/books/author/:author', function(req, res) {
     const author = req.params.author;
     const booksByAuthor = []
@@ -124,7 +124,7 @@ public_users.get('/books/author/:author', function(req, res) {
   getbyAuthor.then(book => res.send(JSON.stringify(book,null,4)));
 });
 
-//Get book details based on Title
+//Get book details based on Title with promise Callbacks
 public_users.get('/books/title/:title', function(req, res) {
     const title = req.params.title;
     const booksByTitle = []
